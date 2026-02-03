@@ -1,6 +1,6 @@
 # MCP Endpoints API Reference
 
-> **Version:** 1.1.0
+> **Version:** 1.2.0
 > **Namespace:** `mcp/v1`
 > **Base URL:** `https://your-site.com/wp-json/mcp/v1`
 
@@ -19,6 +19,8 @@
   - [Taxonomies](#taxonomies)
   - [Menus](#menus)
   - [Users](#users)
+  - [Media](#media)
+  - [Widgets](#widgets)
   - [Health](#health)
 
 ---
@@ -2389,6 +2391,772 @@ curl -X POST -u "admin:xxxx" \
 
 ---
 
+## Media
+
+### List Media
+
+List media items with filtering.
+
+```
+GET /media
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `per_page` | integer | No | 20 | Items per page |
+| `page` | integer | No | 1 | Page number |
+| `mime_type` | string | No | - | Filter by mime type (e.g., image/jpeg) |
+| `search` | string | No | - | Search term |
+| `orderby` | string | No | date | Order by field |
+| `order` | string | No | DESC | ASC or DESC |
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" "https://example.com/wp-json/mcp/v1/media?mime_type=image&per_page=10"
+```
+
+**Response:**
+
+```json
+{
+  "media": [
+    {
+      "id": 123,
+      "title": "hero-image",
+      "url": "https://example.com/wp-content/uploads/2024/01/hero-image.jpg",
+      "mime_type": "image/jpeg",
+      "date": "2024-01-15 10:30:00",
+      "alt": "Hero banner image",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "total": 156,
+  "pages": 16,
+  "page": 1
+}
+```
+
+---
+
+### Get Media
+
+Get detailed media item information.
+
+```
+GET /media/{id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | integer | Yes | Media attachment ID |
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/media/123
+```
+
+**Response:**
+
+```json
+{
+  "id": 123,
+  "title": "hero-image",
+  "url": "https://example.com/wp-content/uploads/2024/01/hero-image.jpg",
+  "mime_type": "image/jpeg",
+  "date": "2024-01-15 10:30:00",
+  "alt": "Hero banner image",
+  "caption": "Main hero image for homepage",
+  "description": "Full-width hero banner",
+  "filename": "hero-image.jpg",
+  "filesize": 245678,
+  "width": 1920,
+  "height": 1080,
+  "sizes": {
+    "thumbnail": {
+      "url": "https://example.com/wp-content/uploads/2024/01/hero-image-150x150.jpg",
+      "width": 150,
+      "height": 150
+    },
+    "medium": {
+      "url": "https://example.com/wp-content/uploads/2024/01/hero-image-300x169.jpg",
+      "width": 300,
+      "height": 169
+    },
+    "large": {
+      "url": "https://example.com/wp-content/uploads/2024/01/hero-image-1024x576.jpg",
+      "width": 1024,
+      "height": 576
+    }
+  },
+  "attached_to": 42
+}
+```
+
+---
+
+### Upload Media
+
+Upload a file to the media library.
+
+```
+POST /media/upload
+```
+
+**Parameters:**
+
+Form-data upload with optional metadata:
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | file | Yes | The file to upload |
+| `title` | string | No | Media title |
+| `alt` | string | No | Alt text (for images) |
+| `caption` | string | No | Caption |
+| `description` | string | No | Description |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/media/upload \
+  -F "file=@/path/to/image.jpg" \
+  -F "title=My Image" \
+  -F "alt=Descriptive alt text"
+```
+
+**Response:**
+
+```json
+{
+  "id": 456,
+  "url": "https://example.com/wp-content/uploads/2024/02/image.jpg",
+  "uploaded": true
+}
+```
+
+---
+
+### Sideload Media
+
+Upload media from a remote URL.
+
+```
+POST /media/sideload
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `url` | string | Yes | - | Remote URL to download |
+| `filename` | string | No | from URL | Custom filename |
+| `title` | string | No | - | Media title |
+| `alt` | string | No | - | Alt text |
+| `caption` | string | No | - | Caption |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/media/sideload \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.org/images/photo.jpg",
+    "title": "Downloaded Photo",
+    "alt": "Photo from external source"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "id": 457,
+  "url": "https://example.com/wp-content/uploads/2024/02/photo.jpg",
+  "uploaded": true,
+  "source_url": "https://example.org/images/photo.jpg"
+}
+```
+
+---
+
+### Update Media
+
+Update media metadata.
+
+```
+PUT /media/{id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | integer | Yes | Media attachment ID |
+| `title` | string | No | Media title |
+| `alt` | string | No | Alt text |
+| `caption` | string | No | Caption |
+| `description` | string | No | Description |
+
+**Example:**
+
+```bash
+curl -X PUT -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/media/123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Updated Title",
+    "alt": "Better alt text for SEO",
+    "caption": "New caption"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "id": 123,
+  "updated": true
+}
+```
+
+---
+
+### Delete Media
+
+Delete a media item.
+
+```
+DELETE /media/{id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `id` | integer | Yes | - | Media attachment ID |
+| `force` | boolean | No | true | Permanently delete (skip trash) |
+
+**Example:**
+
+```bash
+curl -X DELETE -u "admin:xxxx" "https://example.com/wp-json/mcp/v1/media/123?force=true"
+```
+
+**Response:**
+
+```json
+{
+  "id": 123,
+  "deleted": true
+}
+```
+
+---
+
+### Bulk Delete Media
+
+Delete multiple media items at once.
+
+```
+POST /media/bulk-delete
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `ids` | array | Yes | - | Array of media IDs |
+| `force` | boolean | No | true | Permanently delete |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/media/bulk-delete \
+  -H "Content-Type: application/json" \
+  -d '{"ids": [123, 124, 125], "force": true}'
+```
+
+**Response:**
+
+```json
+{
+  "deleted": [123, 124, 125],
+  "failed": [],
+  "deleted_count": 3
+}
+```
+
+---
+
+### Regenerate Thumbnails
+
+Regenerate image thumbnails.
+
+```
+POST /media/{id}/regenerate
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | integer | Yes | Image attachment ID |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" https://example.com/wp-json/mcp/v1/media/123/regenerate
+```
+
+**Response:**
+
+```json
+{
+  "id": 123,
+  "regenerated": true,
+  "sizes": ["thumbnail", "medium", "medium_large", "large"]
+}
+```
+
+---
+
+### Get Media Stats
+
+Get media library statistics.
+
+```
+GET /media/stats
+```
+
+**Parameters:** None
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/media/stats
+```
+
+**Response:**
+
+```json
+{
+  "total": 1523,
+  "by_type": {
+    "image/jpeg": 1200,
+    "image/png": 180,
+    "image/webp": 50,
+    "application/pdf": 45,
+    "video/mp4": 28,
+    "audio/mpeg": 20
+  },
+  "upload_path": "/var/www/html/wp-content/uploads",
+  "upload_url": "https://example.com/wp-content/uploads",
+  "total_size_mb": 2456.78,
+  "max_upload_size": 104857600,
+  "max_upload_size_mb": 100
+}
+```
+
+---
+
+## Widgets
+
+### List Sidebars
+
+List all registered sidebars.
+
+```
+GET /widgets/sidebars
+```
+
+**Parameters:** None
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/widgets/sidebars
+```
+
+**Response:**
+
+```json
+{
+  "sidebars": [
+    {
+      "id": "sidebar-1",
+      "name": "Main Sidebar",
+      "description": "Add widgets here to appear in your sidebar.",
+      "class": "",
+      "widget_count": 5
+    },
+    {
+      "id": "footer-1",
+      "name": "Footer Widget Area",
+      "description": "Widgets in this area will appear in the footer.",
+      "class": "",
+      "widget_count": 3
+    }
+  ],
+  "count": 4
+}
+```
+
+---
+
+### Get Sidebar Widgets
+
+Get all widgets in a specific sidebar.
+
+```
+GET /widgets/sidebars/{sidebar_id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sidebar_id` | string | Yes | Sidebar ID |
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/widgets/sidebars/sidebar-1
+```
+
+**Response:**
+
+```json
+{
+  "sidebar": {
+    "id": "sidebar-1",
+    "name": "Main Sidebar"
+  },
+  "widgets": [
+    {
+      "id": "search-2",
+      "type": "search",
+      "name": "Search",
+      "settings": {
+        "title": "Search"
+      }
+    },
+    {
+      "id": "recent-posts-2",
+      "type": "recent-posts",
+      "name": "Recent Posts",
+      "settings": {
+        "title": "Recent Articles",
+        "number": 5,
+        "show_date": true
+      }
+    },
+    {
+      "id": "text-3",
+      "type": "text",
+      "name": "Text",
+      "settings": {
+        "title": "About Us",
+        "text": "<p>Welcome to our site!</p>"
+      }
+    }
+  ],
+  "count": 3
+}
+```
+
+---
+
+### List Widget Types
+
+List all available widget types.
+
+```
+GET /widgets/types
+```
+
+**Parameters:** None
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/widgets/types
+```
+
+**Response:**
+
+```json
+{
+  "types": [
+    {
+      "id_base": "text",
+      "name": "Text",
+      "description": "Arbitrary text or HTML.",
+      "class": "WP_Widget_Text"
+    },
+    {
+      "id_base": "search",
+      "name": "Search",
+      "description": "A search form for your site.",
+      "class": "WP_Widget_Search"
+    },
+    {
+      "id_base": "recent-posts",
+      "name": "Recent Posts",
+      "description": "Your site's most recent Posts.",
+      "class": "WP_Widget_Recent_Posts"
+    },
+    {
+      "id_base": "categories",
+      "name": "Categories",
+      "description": "A list or dropdown of categories.",
+      "class": "WP_Widget_Categories"
+    }
+  ],
+  "count": 15
+}
+```
+
+---
+
+### Get Widget
+
+Get a single widget's details.
+
+```
+GET /widgets/{widget_id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | string | Yes | Widget ID (e.g., `text-2`) |
+
+**Example:**
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/widgets/text-3
+```
+
+**Response:**
+
+```json
+{
+  "id": "text-3",
+  "type": "text",
+  "name": "Text",
+  "settings": {
+    "title": "About Us",
+    "text": "<p>Welcome to our site!</p>",
+    "filter": true,
+    "visual": true
+  },
+  "sidebar_id": "sidebar-1"
+}
+```
+
+---
+
+### Add Widget
+
+Add a new widget to a sidebar.
+
+```
+POST /widgets
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `sidebar_id` | string | Yes | - | Target sidebar ID |
+| `widget_type` | string | Yes | - | Widget type (e.g., `text`, `search`) |
+| `settings` | object | No | {} | Widget settings |
+| `position` | integer | No | end | Position in sidebar |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/widgets \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sidebar_id": "sidebar-1",
+    "widget_type": "text",
+    "settings": {
+      "title": "Welcome",
+      "text": "<p>Hello visitors!</p>"
+    },
+    "position": 0
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "widget_id": "text-4",
+  "sidebar_id": "sidebar-1",
+  "created": true
+}
+```
+
+---
+
+### Update Widget
+
+Update a widget's settings.
+
+```
+PUT /widgets/{widget_id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | string | Yes | Widget ID |
+| `settings` | object | Yes | Settings to update |
+
+**Example:**
+
+```bash
+curl -X PUT -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/widgets/text-3 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "settings": {
+      "title": "Updated Title",
+      "text": "<p>New content here</p>"
+    }
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "widget_id": "text-3",
+  "updated": true
+}
+```
+
+---
+
+### Delete Widget
+
+Remove a widget from its sidebar.
+
+```
+DELETE /widgets/{widget_id}
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | string | Yes | Widget ID |
+
+**Example:**
+
+```bash
+curl -X DELETE -u "admin:xxxx" https://example.com/wp-json/mcp/v1/widgets/text-3
+```
+
+**Response:**
+
+```json
+{
+  "widget_id": "text-3",
+  "deleted": true
+}
+```
+
+---
+
+### Move Widget
+
+Move a widget to a different sidebar.
+
+```
+POST /widgets/{widget_id}/move
+```
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `widget_id` | string | Yes | - | Widget ID |
+| `sidebar_id` | string | Yes | - | Target sidebar ID |
+| `position` | integer | No | end | Position in target sidebar |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/widgets/text-3/move \
+  -H "Content-Type: application/json" \
+  -d '{"sidebar_id": "footer-1", "position": 0}'
+```
+
+**Response:**
+
+```json
+{
+  "widget_id": "text-3",
+  "from_sidebar": "sidebar-1",
+  "to_sidebar": "footer-1",
+  "moved": true
+}
+```
+
+---
+
+### Reorder Widgets
+
+Reorder widgets within a sidebar.
+
+```
+POST /widgets/sidebars/{sidebar_id}/reorder
+```
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sidebar_id` | string | Yes | Sidebar ID |
+| `widget_ids` | array | Yes | Ordered array of widget IDs |
+
+**Example:**
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/widgets/sidebars/sidebar-1/reorder \
+  -H "Content-Type: application/json" \
+  -d '{"widget_ids": ["search-2", "text-3", "recent-posts-2"]}'
+```
+
+**Response:**
+
+```json
+{
+  "sidebar_id": "sidebar-1",
+  "widget_ids": ["search-2", "text-3", "recent-posts-2"],
+  "reordered": true
+}
+```
+
+---
+
 ## Health
 
 ### Get Health Status
@@ -2768,6 +3536,24 @@ curl -X POST -u "admin:xxxx" \
 | | PUT | `/users/{id}/role` | Update role |
 | | GET | `/users/{id}/meta` | Get meta |
 | | POST | `/users/{id}/meta` | Update meta |
+| **Media** | GET | `/media` | List media |
+| | GET | `/media/{id}` | Get media item |
+| | POST | `/media/upload` | Upload file |
+| | POST | `/media/sideload` | Upload from URL |
+| | PUT | `/media/{id}` | Update metadata |
+| | DELETE | `/media/{id}` | Delete media |
+| | POST | `/media/bulk-delete` | Bulk delete |
+| | POST | `/media/{id}/regenerate` | Regenerate thumbnails |
+| | GET | `/media/stats` | Media statistics |
+| **Widgets** | GET | `/widgets/sidebars` | List sidebars |
+| | GET | `/widgets/sidebars/{id}` | Get sidebar widgets |
+| | GET | `/widgets/types` | List widget types |
+| | GET | `/widgets/{id}` | Get widget |
+| | POST | `/widgets` | Add widget |
+| | PUT | `/widgets/{id}` | Update widget |
+| | DELETE | `/widgets/{id}` | Delete widget |
+| | POST | `/widgets/{id}/move` | Move widget |
+| | POST | `/widgets/sidebars/{id}/reorder` | Reorder widgets |
 | **Health** | GET | `/health` | Health status |
 | | GET | `/health/debug` | Debug info |
 | | GET | `/health/php` | PHP info |
@@ -2778,6 +3564,12 @@ curl -X POST -u "admin:xxxx" \
 ---
 
 ## Changelog
+
+### v1.2.0
+
+- Added Media endpoints (upload, sideload, edit, bulk delete, regenerate thumbnails, stats)
+- Added Widgets endpoints (sidebars, widget CRUD, move, reorder)
+- Phase 1 complete: All core free plugin features implemented
 
 ### v1.1.0
 

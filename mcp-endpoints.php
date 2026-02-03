@@ -3,7 +3,7 @@
  * Plugin Name: MCP Endpoints
  * Plugin URI: https://github.com/cvrt-gmbh/mcp-endpoints
  * Description: Extends WordPress REST API with additional endpoints for MCP (Model Context Protocol) servers. Adds plugin/theme installation, WP-CLI commands, database operations, and more.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: CAVORT
  * Author URI: https://cavort.de
  * License: MIT
@@ -14,7 +14,7 @@
 
 defined('ABSPATH') || exit;
 
-define('MCP_ENDPOINTS_VERSION', '1.1.0');
+define('MCP_ENDPOINTS_VERSION', '1.2.0');
 define('MCP_ENDPOINTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 // Load components
@@ -29,6 +29,8 @@ require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-taxonomies-end
 require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-menus-endpoint.php';
 require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-users-endpoint.php';
 require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-health-endpoint.php';
+require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-media-endpoint.php';
+require_once MCP_ENDPOINTS_PLUGIN_DIR . 'includes/endpoints/class-widgets-endpoint.php';
 
 // Initialize
 add_action('rest_api_init', function() {

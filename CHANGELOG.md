@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-03
+
+### Added
+- Media endpoints: list, get, upload, sideload from URL, update metadata, delete, bulk delete, regenerate thumbnails, stats
+- Widgets endpoints: list sidebars, get sidebar widgets, list widget types, widget CRUD, move between sidebars, reorder
+
+### Notes
+- Phase 1 complete: All core free plugin features from ROADMAP.md are now implemented
+- API-REFERENCE.md updated with full documentation for all 70+ endpoints
+
 ## [1.1.0] - 2026-02-03
 
 ### Added

@@ -23,6 +23,8 @@ class MCP_Endpoints {
             new MCP_Menus_Endpoint(),
             new MCP_Users_Endpoint(),
             new MCP_Health_Endpoint(),
+            new MCP_Media_Endpoint(),
+            new MCP_Widgets_Endpoint(),
         ];
     }
 
