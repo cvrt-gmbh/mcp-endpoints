@@ -15,3 +15,10 @@ wp-config.php
 
 # Local development
 .env
+
+# AI assistants
+.claude/
+.ralphy/
+.aim/
+AGENTS.md
+CLAUDE.md
