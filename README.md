@@ -1,5 +1,9 @@
 # MCP Endpoints
 
+[![WordPress](https://img.shields.io/badge/WordPress-6.0+-blue.svg)](https://wordpress.org)
+[![PHP](https://img.shields.io/badge/PHP-8.0+-purple.svg)](https://php.net)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 WordPress plugin that extends the REST API with additional endpoints for MCP (Model Context Protocol) servers.
 
 Adds capabilities missing from the standard WordPress REST API: plugin/theme installation from WordPress.org, core updates, database operations, and more.
