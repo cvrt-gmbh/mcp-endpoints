@@ -18,6 +18,11 @@ class MCP_Endpoints {
             new MCP_Core_Endpoint(),
             new MCP_Database_Endpoint(),
             new MCP_Options_Endpoint(),
+            new MCP_CPT_Endpoint(),
+            new MCP_Taxonomies_Endpoint(),
+            new MCP_Menus_Endpoint(),
+            new MCP_Users_Endpoint(),
+            new MCP_Health_Endpoint(),
         ];
     }
 

@@ -100,6 +100,86 @@ curl -X POST -u "admin:xxxx" \
 | DELETE | `/options/{key}` | Delete option |
 | POST | `/options-bulk` | Get multiple options at once |
 
+### Custom Post Types
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/cpt` | List all registered post types |
+| GET | `/cpt/{type}` | Get post type schema and counts |
+| GET | `/cpt/{type}/posts` | Get posts of a specific type |
+| POST | `/cpt/{type}/posts` | Create post of specific type |
+| PUT | `/cpt/{type}/posts/{id}` | Update post |
+| DELETE | `/cpt/{type}/posts/{id}` | Delete post |
+
+#### Create Custom Post
+
+```bash
+curl -X POST -u "admin:xxxx" \
+  https://example.com/wp-json/mcp/v1/cpt/product/posts \
+  -H "Content-Type: application/json" \
+  -d '{"title": "New Product", "content": "Description", "status": "publish", "meta": {"price": "99.00"}}'
+```
+
+### Taxonomies
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/taxonomies` | List all public taxonomies |
+| GET | `/taxonomies/{taxonomy}` | Get taxonomy details |
+| GET | `/taxonomies/{taxonomy}/terms` | Get terms of a taxonomy |
+| POST | `/taxonomies/{taxonomy}/terms` | Create term |
+| PUT | `/taxonomies/{taxonomy}/terms/{id}` | Update term |
+| DELETE | `/taxonomies/{taxonomy}/terms/{id}` | Delete term |
+| POST | `/taxonomies/assign` | Assign terms to post |
+
+### Menus
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/menus` | List all navigation menus |
+| GET | `/menus/locations` | Get registered menu locations |
+| GET | `/menus/{id}` | Get menu with all items |
+| POST | `/menus` | Create new menu |
+| PUT | `/menus/{id}` | Update menu |
+| DELETE | `/menus/{id}` | Delete menu |
+| POST | `/menus/{id}/items` | Add menu item |
+| PUT | `/menus/items/{item_id}` | Update menu item |
+| DELETE | `/menus/items/{item_id}` | Delete menu item |
+| POST | `/menus/locations/assign` | Assign menu to location |
+
+### Users
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users` | List users with filtering |
+| GET | `/users/{id}` | Get single user details |
+| POST | `/users` | Create new user |
+| PUT | `/users/{id}` | Update user |
+| DELETE | `/users/{id}` | Delete user |
+| GET | `/users/roles` | List all roles with capabilities |
+| PUT | `/users/{id}/role` | Update user role |
+| GET | `/users/{id}/meta` | Get user meta |
+| POST | `/users/{id}/meta` | Update user meta |
+
+### Health & Diagnostics
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Site health status and score |
+| GET | `/health/debug` | Debug info (paths, constants) |
+| GET | `/health/php` | PHP configuration info |
+| GET | `/health/plugins` | Plugin health and updates |
+| GET | `/health/cron` | Cron jobs status |
+| POST | `/health/cron/run` | Run specific cron job |
+
+#### Health Check
+
+```bash
+curl -u "admin:xxxx" https://example.com/wp-json/mcp/v1/health
+```
+
+Returns health score, WordPress/PHP/DB versions, update counts, and issues.
+
 ## Usage with MCP Server
 
 After installing this plugin, the `wordpress-mcp` server can be extended to use these endpoints for:
